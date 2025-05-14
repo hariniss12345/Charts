@@ -53,7 +53,7 @@ export function BarCharts() {
         <View style={{ flexDirection: "column", padding: 16, marginTop: 90 }}>
             {/* === Graph 1 === */}
             <View style={{ height: 220, flexDirection: "row", marginBottom: 50 }}>
-                <YAxis
+                {/* <YAxis
                     data={data}
                     contentInset={{ top: 10, bottom: 10 }}
                     svg={{ fill: "black", fontSize: 12 }}
@@ -63,7 +63,7 @@ export function BarCharts() {
                     }
                     min={-5}
                     max={25}
-                />
+                /> */}
                 <View
                     style={{
                         flex: 1,
@@ -82,6 +82,7 @@ export function BarCharts() {
                         animate
                         yAccessor={({ item }) => item}
                         svg={{ fill: "transparent" }}
+                        
                     >
                         <RoundedBars />
                     </BarChart>
