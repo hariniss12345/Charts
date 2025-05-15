@@ -4,6 +4,7 @@ import { BarCharts } from "./src/components/BarChart";
 import { DoughnutChart } from "./src/components/DoughnutChart";
 import { Goals  } from "./src/components/Goals";
 import { Profile } from "./src/components/Profile";
+import { Products } from "./src/components/Products";
 
 export default function App(){
   return (
@@ -12,7 +13,8 @@ export default function App(){
       {/* <BarCharts/>
       <DoughnutChart/> */}
       {/* <Goals/> */}
-      <Profile/>
+      {/* <Profile/> */}
+      <Products/>
       </ScrollView>
     </View>
   )
