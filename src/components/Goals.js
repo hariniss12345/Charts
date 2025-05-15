@@ -1,112 +1,126 @@
-import React, { useState, useCallback } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 
-const dropDown = {
-    type: ['Quarterly', 'Monthly', 'Annually']
-};
+const DROPDOWN_TYPES = ['Quarterly', 'Monthly', 'Annually'];
 
-const data = [
+const sampleData = [
     {
-        title: 'Old Arrack Original',
-        subtitle: 'Arrack',
-        description: '750ml (Pack of 6)',
+        title: "Old Arrack Original",
+        subtitle: "Arrack",
+        description: "750ml (Pack of 6)",
         dataSets: [
-            { label: 'Target', value: '300 units' },
-            { label: 'Achieved', value: '220 units' }
+            { label: "Target", value: "300 units" },
+            { label: "Achieved", value: "220 units" },
         ],
-        target: [
-            { label: 'Target Achieved', value: '73%' }
-        ]
-    }
+        target: [{ label: "Target Achieved", value: "73%" }],
+    },
 ];
 
-export function Goals() {
-    const [showDropdown, setShowDropdown] = useState(false);
-    const [selectedType, setSelectedType] = useState("Monthly");
+function Dropdown({ options, selected, onSelect }) {
+    const [visible, setVisible] = useState(false);
 
-
-    const handleToggleDropdown = useCallback(() => {
-        setShowDropdown(prev => !prev);
-    }, []);
-
-    const handleSelect = useCallback((item) => {
-        setSelectedType(item);
-        setShowDropdown(false);
-    }, []);
-
-    const getPercentage = useCallback((percentString) => {
-        return parseInt(percentString.replace('%', ''), 10) || 0;
-    }, []);
+    const toggle = () => setVisible(!visible);
+    const handleSelect = (item) => {
+        onSelect(item);
+        setVisible(false);
+    };
 
     return (
-        <View style={styles.container}>
-
-            <TouchableOpacity onPress={handleToggleDropdown} style={styles.card}>
-                <Text style={styles.cardText}>{selectedType}</Text>
-                {showDropdown ? (
-                    <Image
-                        source={require('../assets/icons/ChevronDown.png')}
-                        style={styles.icon}
-                    />
-                ) : (
-                    <Image
-                        source={require('../assets/icons/Shape.png')}
-                        style={styles.icon}
-                    />
-                )}
+        <>
+            <TouchableOpacity onPress={toggle} style={styles.card}>
+                <Text style={styles.cardText}>{selected}</Text>
+                <Image
+                    source={
+                        visible
+                            ? require("../assets/icons/ChevronDown.png")
+                            : require("../assets/icons/Shape.png")
+                    }
+                    style={styles.icon}
+                />
             </TouchableOpacity>
 
-            {showDropdown && (
+            {visible && (
                 <View style={styles.dropdownCard}>
-                    {dropDown.type.map((item) => (
-                        <TouchableOpacity key={item} onPress={() => handleSelect(item)} style={styles.dropdownItem}>
+                    {options.map((item) => (
+                        <TouchableOpacity
+                            key={item}
+                            onPress={() => handleSelect(item)}
+                            style={styles.dropdownItem}
+                        >
                             <Text style={styles.dropdownText}>{item}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
             )}
+        </>
+    );
+}
+
+function DataRow({ data, labelStyle, valueStyle }) {
+    return (
+        <View style={styles.row}>
+            {data.map(({ label, value }, i) => (
+                <View key={i} style={styles.flexItem}>
+                    <Text style={[styles.dataText, labelStyle]}>{label}</Text>
+                    <Text style={[styles.dataValue, valueStyle]}>{value}</Text>
+                </View>
+            ))}
+        </View>
+    );
+}
+
+function ProgressBar({ label, value }) {
+    const percentage = parseInt(value.replace("%", ""), 10) || 0;
+
+    return (
+        <View style={{ marginTop: 10 }}>
+            <View style={[styles.row, { justifyContent: "flex-start" }]}>
+                <View style={styles.targetAchievedContainer}>
+                    <Text style={styles.dataText}>{label}:</Text>
+                    <Text style={[styles.dataValue, { marginLeft: 5 }]}>{value}</Text>
+                </View>
+            </View>
+            <View style={styles.progressBarBackground}>
+                <View style={[styles.progressBarFill, { width: `${percentage}%` }]} />
+            </View>
+        </View>
+    );
+}
+
+export function Goals() {
+    const [selectedType, setSelectedType] = useState("Monthly");
+
+    return (
+        <View style={styles.container}>
+            <Dropdown
+                options={DROPDOWN_TYPES}
+                selected={selectedType}
+                onSelect={setSelectedType}
+            />
 
             <View style={styles.dataCard}>
-                {data.map((ele, index) => (
-                    <View key={index} style={{ marginBottom: 15 }}>
-                        <Text style={styles.title}>{ele.title}</Text>
-                        <Text style={styles.subtitle}>{ele.subtitle}</Text>
-                        <Text style={styles.description}>{ele.description}</Text>
+                {sampleData.map(({ title, subtitle, description, dataSets, target }, i) => (
+                    <View key={i} style={{ marginBottom: 15 }}>
+                        <Text style={styles.title}>{title}</Text>
+                        <Text style={styles.subtitle}>{subtitle}</Text>
+                        <Text style={styles.description}>{description}</Text>
 
-                        {/* Labels row */}
-                        <View style={styles.row}>
-                            {ele.dataSets.map((d, i) => (
-                                <Text key={i} style={[styles.dataText, styles.flexItem]}>
-                                    {d.label}
-                                </Text>
-                            ))}
-                        </View>
 
-                        {/* Values row */}
-                        <View style={styles.row}>
-                            {ele.dataSets.map((d, i) => (
-                                <Text key={i} style={[styles.dataValue, styles.flexItem]}>
-                                    {d.value}
-                                </Text>
-                            ))}
-                        </View>
+                        <DataRow
+                            data={dataSets.map(({ label }) => ({ label, value: "" }))}
+                            labelStyle={styles.dataText}
+                            valueStyle={{ display: "none" }}
+                        />
+                        <DataRow
+                            data={dataSets.map(({ value }) => ({ label: "", value }))}
+                            labelStyle={{ display: "none" }}
+                            valueStyle={styles.dataValue}
+                        />
 
-                        {ele.target && ele.target.map((t, i) => {
-                            const percentage = getPercentage(t.value);
-                            return (
-                                <View key={i} style={{ marginTop: 10 }}>
-                                    <View style={[styles.row, { justifyContent: 'flex-start' }]}>
-                                        <View style={styles.targetAchievedContainer}>
-                                            <Text style={styles.dataText}>{t.label}:</Text>
-                                            <Text style={[styles.dataValue, { marginLeft: 5 }]}>{t.value}</Text>
-                                        </View>
-                                    </View>
-                                    <View style={styles.progressBarBackground}>
-                                        <View style={[styles.progressBarFill, { width: `${percentage}%` }]} />
-                                    </View>
-                                </View>
-                            );
-                        })}
+
+                        {target?.map(({ label, value }, i) => (
+                            <ProgressBar key={i} label={label} value={value} />
+                        ))}
                     </View>
                 ))}
             </View>
@@ -115,98 +129,63 @@ export function Goals() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        margin: 20,
-    },
+    container: { margin: 20 },
     card: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#007ACC',
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#007ACC",
         padding: 15,
         borderRadius: 10,
         elevation: 2,
     },
-    cardText: {
-        flex: 1,
-        fontSize: 18,
-        color: 'white',
-    },
-    icon: {
-        width: 30,
-        height: 30,
-        resizeMode: 'contain',
-        tintColor: 'white',
-    },
+    cardText: { flex: 1, fontSize: 18, color: "white" },
+    icon: { width: 30, height: 30, resizeMode: "contain", tintColor: "white" },
     dropdownCard: {
         marginTop: 10,
-        backgroundColor: '#FFF',
+        backgroundColor: "#FFF",
         borderRadius: 10,
         elevation: 3,
         paddingVertical: 5,
     },
-    dropdownItem: {
-        padding: 15,
-    },
-    dropdownText: {
-        fontSize: 16,
-    },
+    dropdownItem: { padding: 15 },
+    dropdownText: { fontSize: 16 },
     dataCard: {
-        backgroundColor: '#E0E0E0',
+        backgroundColor: "#E0E0E0",
         borderRadius: 10,
         padding: 20,
         marginTop: 30,
         elevation: 3,
     },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 5,
-    },
-    subtitle: {
-        fontSize: 16,
-        color: '#555',
-        marginBottom: 5,
-    },
-    description: {
-        fontSize: 14,
-        color: '#666',
-        marginBottom: 10,
-    },
+    title: { fontSize: 20, fontWeight: "bold", color: "#333", marginBottom: 5 },
+    subtitle: { fontSize: 16, color: "#555", marginBottom: 5 },
+    description: { fontSize: 14, color: "#666", marginBottom: 10 },
     row: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        flexDirection: "row",
+        justifyContent: "space-between",
         marginBottom: 5,
     },
     flexItem: {
         flex: 1,
-        textAlign: 'flex-start',
+        textAlign: "left",
     },
-    dataText: {
-        fontSize: 14,
-        color: '#333',
-    },
-    dataValue: {
-        fontSize: 14,
-        color: '#555',
-        fontWeight: 'bold',
-    },
+    dataText: { fontSize: 14, color: "#333" },
+    dataValue: { fontSize: 14, color: "#555", fontWeight: "bold" },
     targetAchievedContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         marginRight: 20,
     },
     progressBarBackground: {
         height: 10,
-        backgroundColor: '#ccc',
+        backgroundColor: "#ccc",
         borderRadius: 5,
-        overflow: 'hidden',
+        overflow: "hidden",
         marginTop: 6,
-        width: '100%',
+        width: "100%",
     },
     progressBarFill: {
-        height: '100%',
-        backgroundColor: 'red',
+        height: "100%",
+        backgroundColor: "red",
         borderRadius: 5,
     },
 });
