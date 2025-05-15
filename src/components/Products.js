@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     nameItem: {
         marginHorizontal: 10,
         paddingBottom: 5,
-        borderBottomWidth: 2,
+        borderBottomWidth: 4,
         borderBottomColor: 'transparent',
     },
     selectedNameItem: {
@@ -277,5 +277,7 @@ const styles = StyleSheet.create({
         borderBottomColor: 'black',
         borderBottomWidth: StyleSheet.hairlineWidth,
         width: '100%',
+        marginTop:-1,
+        marginLeft:10
     },
 });
