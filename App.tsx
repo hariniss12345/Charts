@@ -3,6 +3,7 @@ import {View,ScrollView} from 'react-native'
 import { BarCharts } from "./src/components/BarChart";
 import { DoughnutChart } from "./src/components/DoughnutChart";
 import { Goals  } from "./src/components/Goals";
+import { Profile } from "./src/components/Profile";
 
 export default function App(){
   return (
@@ -10,7 +11,8 @@ export default function App(){
       <ScrollView>
       {/* <BarCharts/>
       <DoughnutChart/> */}
-      <Goals/>
+      {/* <Goals/> */}
+      <Profile/>
       </ScrollView>
     </View>
   )
