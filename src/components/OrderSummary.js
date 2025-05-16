@@ -51,6 +51,9 @@ export function OrderSummary() {
                         </View>
                     </View>
                 ))}
+                <Card style={{backgroundColor:'#007ACC'}}>
+                <Text style={{color:'white'}}>12 Bottles of Budweiser Magnum Cans added with this product</Text>
+                </Card>
             </Card>
 
           <Card>
@@ -180,7 +183,7 @@ const styles = StyleSheet.create({
     inputWithIcon: {
         height: 48,
         borderWidth: 1,
-        borderColor: '#007ACC',
+        borderColor: '#D3D3D3',
         borderRadius: 10,
         paddingLeft: 12,
         paddingRight: 40,
@@ -194,6 +197,6 @@ const styles = StyleSheet.create({
         top: 14,
         width: 20,
         height: 20,
-        resizeMode: 'contain',
+        objectFit: 'contain',
     },
 });
