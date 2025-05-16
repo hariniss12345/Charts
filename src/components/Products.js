@@ -8,6 +8,8 @@ import {
     TouchableOpacity,
 } from "react-native";
 import DataRow from "../ReusableComponents/DataRow";
+import QuantitySelector from "../ReusableComponents/QuantitySelector";
+
 
 export function Products() {
     const data = {
@@ -45,18 +47,18 @@ export function Products() {
         setQuantity(1);
     };
 
-    const handleIncrement = () => {
-        setQuantity((prev) => prev + 1);
-    };
+    // const handleIncrement = () => {
+    //     setQuantity((prev) => prev + 1);
+    // };
 
-    const handleDecrement = () => {
-        if (quantity > 1) {
-            setQuantity((prev) => prev - 1);
-        } else {
-            setIsAdded(false);
-            setQuantity(0);
-        }
-    };
+    // const handleDecrement = () => {
+    //     if (quantity > 1) {
+    //         setQuantity((prev) => prev - 1);
+    //     } else {
+    //         setIsAdded(false);
+    //         setQuantity(0);
+    //     }
+    // };
 
     return (
         <ScrollView style={styles.container}>
@@ -134,15 +136,11 @@ export function Products() {
                                     <Text style={[styles.buttonText, { color: 'white' }]}>Add</Text>
                                 </TouchableOpacity>
                             ) : (
-                                <View style={styles.quantityContainer}>
-                                    <TouchableOpacity onPress={handleDecrement}>
-                                        <Text style={styles.quantityButton}>-</Text>
-                                    </TouchableOpacity>
-                                    <Text style={styles.quantityText}>{quantity}</Text>
-                                    <TouchableOpacity onPress={handleIncrement}>
-                                        <Text style={styles.quantityButton}>+</Text>
-                                    </TouchableOpacity>
-                                </View>
+                                <QuantitySelector
+                                    initialQuantity={quantity}
+                                    onChange={(newQty) => setQuantity(newQty)}
+                                />
+
                             )}
                         </View>
                     </View>
@@ -277,7 +275,7 @@ const styles = StyleSheet.create({
         borderBottomColor: 'black',
         borderBottomWidth: StyleSheet.hairlineWidth,
         width: '100%',
-        marginTop:-1,
-        marginLeft:10
+        marginTop: -1,
+        marginLeft: 10
     },
 });
