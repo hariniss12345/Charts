@@ -88,18 +88,28 @@ export function OrderSummary() {
   );
 
   const ListHeader = () => (
-    <>
-      <Card>
-        <Text style={styles.heading}>Order Summary</Text>
-      </Card>
-      <Card style={{ backgroundColor: "#007ACC" }}>
+    <Card>
+      <Text style={styles.heading}>Order Summary</Text>
+      {data.map((item, index) => (
+        <View key={index} style={styles.row}>
+          <View style={styles.textContainer}>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.subtitle}>{item.subtitle}</Text>
+            <Text style={styles.description}>{item.description}</Text>
+          </View>
+          <QuantitySelector
+            initialQuantity={quantities[index] || 0}
+            onChange={(qty) => handleQuantityChange(index, qty)}
+          />
+        </View>
+      ))}
+      <Card style={{ backgroundColor: "#007ACC", marginTop: 16 }}>
         <Text style={{ color: "white" }}>
           12 Bottles of Budweiser Magnum Cans added with this product
         </Text>
       </Card>
-    </>
+    </Card>
   );
-
 
   const ListFooter = () => (
     <>
@@ -220,9 +230,9 @@ export function OrderSummary() {
   return (
     <FlatList
       style={styles.container}
-      data={data}
+      data={[]} // data is rendered manually in ListHeader
       keyExtractor={(item, index) => index.toString()}
-      renderItem={renderOrderItem}
+      renderItem={null}
       ListHeaderComponent={ListHeader}
       ListFooterComponent={ListFooter}
       keyboardShouldPersistTaps="handled"
@@ -244,6 +254,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: 16,
   },
   textContainer: {
     flex: 1,
@@ -262,7 +273,6 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 13,
     color: "#555",
-    marginBottom: 20,
   },
   billHeading: {
     fontSize: 18,
