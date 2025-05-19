@@ -10,8 +10,11 @@ import {
 import DataRow from "../ReusableComponents/DataRow";
 import QuantitySelector from "../ReusableComponents/QuantitySelector";
 import Card from "../ReusableComponents/Card";
+import { useNavigation } from "@react-navigation/native";
+
 
 export function Products() {
+    const navigation = useNavigation()
     const data = {
         title: [
             "All Products",
@@ -166,7 +169,7 @@ export function Products() {
 
 
                         <View style={styles.buttonRow}>
-                            <TouchableOpacity style={styles.actionButton}>
+                            <TouchableOpacity style={styles.actionButton} onPress={()=>navigation.navigate('ViewDetails')}>
                                 <Text style={styles.buttonText}>View Details</Text>
                             </TouchableOpacity>
 

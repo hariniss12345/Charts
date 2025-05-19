@@ -11,6 +11,7 @@ import { Goals } from "./src/components/Goals";
 import { Products } from "./src/components/Products";
 import { OrderSummary } from "./src/components/OrderSummary";
 import { Analytics } from "./src/components/Analytics";
+import { ViewDetails } from "./src/components/ViewDetails";
 
 const Stack = createNativeStackNavigator();
 
@@ -19,15 +20,18 @@ export default function App() {
     <View style={{ flex: 1 }}>
       {/* <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Profile" component={Profile} />
-          <Stack.Screen name="EditProfile" component={EditProfile} />
+           <Stack.Screen name="Profile" component={Profile} />
+          <Stack.Screen name="EditProfile" component={EditProfile} /> 
+          <Stack.Screen name="Products" component={Products}/>
+          <Stack.Screen name="ViewDetails" component={ViewDetails}/> 
+          
         </Stack.Navigator>
       </NavigationContainer> */}
 
       {/* <BarCharts /> */}
       {/* <DoughnutChart /> */}
        {/* <Goals />  */}
-      {/* <Products /> */}
+
       {/* <OrderSummary /> */}
       <Analytics/>
     </View>
