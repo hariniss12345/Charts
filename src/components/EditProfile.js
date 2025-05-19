@@ -14,7 +14,7 @@ const data = {
     type: ["Mr", "Mrs"],
 };
 
-export function Profile() {
+export function EditProfile() {
     const [salutation, setSalutation] = useState("");
 
     return (
