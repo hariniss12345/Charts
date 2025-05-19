@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import DataRow from "../ReusableComponents/DataRow";
 import QuantitySelector from "../ReusableComponents/QuantitySelector";
-
+import Card from "../ReusableComponents/Card";
 
 export function Products() {
     const data = {
@@ -36,29 +36,50 @@ export function Products() {
                 { label: "Stock", value: "113" },
             ],
         },
+        {
+            title: "Ceylon Arrack",
+            subtitle: "Arrack",
+            description: "750ml (Pack of 6)",
+            dataSets: [
+                { label: "MRP", value: "\u20B93,852" },
+                { label: "PTR", value: "\u20B93,200" },
+                { label: "Margin", value: "13.78%" },
+                { label: "Stock", value: "200" },
+            ],
+        },
+        {
+            title: "Double Distilled",
+            subtitle: "Arrack",
+            description: "750ml (Pack of 6)",
+            dataSets: [
+                { label: "MRP", value: "\u20B93,852" },
+                { label: "PTR", value: "\u20B93,200" },
+                { label: "Margin", value: "13.78%" },
+                { label: "Stock", value: "200" },
+            ],
+        },
+        {
+            title: "Navy Seal",
+            subtitle: "Arrack",
+            description: "750ml (Pack of 6)",
+            dataSets: [
+                { label: "MRP", value: "\u20B93,852" },
+                { label: "PTR", value: "\u20B93,200" },
+                { label: "Margin", value: "13.78%" },
+                { label: "Stock", value: "200" },
+            ],
+        },
     ];
 
     const [quantity, setQuantity] = useState(0);
     const [isAdded, setIsAdded] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedTitle, setSelectedTitle] = useState(null);
 
     const handleAddClick = () => {
         setIsAdded(true);
         setQuantity(1);
     };
-
-    // const handleIncrement = () => {
-    //     setQuantity((prev) => prev + 1);
-    // };
-
-    // const handleDecrement = () => {
-    //     if (quantity > 1) {
-    //         setQuantity((prev) => prev - 1);
-    //     } else {
-    //         setIsAdded(false);
-    //         setQuantity(0);
-    //     }
-    // };
 
     return (
         <ScrollView style={styles.container}>
@@ -68,11 +89,20 @@ export function Products() {
                         const firstSpaceIndex = item.indexOf(" ");
                         const firstWord = firstSpaceIndex !== -1 ? item.slice(0, firstSpaceIndex) : item;
                         const rest = firstSpaceIndex !== -1 ? item.slice(firstSpaceIndex + 1) : "";
-                        return (
-                            <View key={index} style={styles.card}>
-                                <Text style={styles.firstLine}>{firstWord}</Text>
-                                <Text style={styles.secondLine}>{rest}</Text>
-                            </View>
+                        const isSelected = selectedTitle === item;
+
+                        return (<Card key={index} style={{ backgroundColor: selectedTitle === item ? "red" : "#E0E0E0", marginRight: 10, borderWidth: 0 }}>
+                            <TouchableOpacity onPress={() => setSelectedTitle(item)} className="flex-col justify-center items-center px-3 py-2">
+                                <Text style={{ fontWeight: '600', fontSize: 16, color: selectedTitle === item ? 'white' : 'black' }}>
+                                    {firstWord}
+                                </Text>
+                                <Text style={{ fontWeight: '600', fontSize: 16, color: selectedTitle === item ? 'white' : 'black' }}>
+                                    {rest}
+                                </Text>
+
+                            </TouchableOpacity>
+                        </Card>
+
                         );
                     })}
                 </View>
@@ -89,9 +119,7 @@ export function Products() {
                                 selectedItem === item && styles.selectedNameItem,
                             ]}
                         >
-                            <Text style={styles.nameText}>
-                                {item}
-                            </Text>
+                            <Text style={styles.nameText}>{item}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -111,8 +139,13 @@ export function Products() {
 
             <View style={{ marginTop: 30 }}>
                 {product.map((item, index) => (
-                    <View key={index} style={styles.productCard}>
-                        <Text style={styles.productTitle}>{item.title}</Text>
+                    <Card key={index} style={{ marginBottom: 15 }}>
+                        <View style={styles.titleRow}>
+                            <Text style={styles.productTitle}>{item.title}</Text>
+                            <View style={styles.inStockBadge}>
+                                <Text style={styles.inStockText}>In Stock</Text>
+                            </View>
+                        </View>
                         <Text style={styles.productSubtitle}>{item.subtitle}</Text>
                         <Text style={styles.productDesc}>{item.description}</Text>
                         <DataRow data={item.dataSets} />
@@ -122,6 +155,15 @@ export function Products() {
                                 Add 10 quantity to get a discount 10% on total item bill
                             </Text>
                         )}
+
+                        {selectedTitle === "Free Products" && (
+                            <Card style={{marginTop:10,backgroundColor:'#007ACC'}}>
+                            <Text style={{ color: 'white' }}>
+                                Get 12 Bottles of Budweiser Magnum Cans free with every 6 packs.
+                            </Text>
+                            </Card>
+                        )}
+
 
                         <View style={styles.buttonRow}>
                             <TouchableOpacity style={styles.actionButton}>
@@ -137,13 +179,12 @@ export function Products() {
                                 </TouchableOpacity>
                             ) : (
                                 <QuantitySelector
-                                    initialQuantity={quantity}
+                                    initialQuantity={0}
                                     onChange={(newQty) => setQuantity(newQty)}
                                 />
-
                             )}
                         </View>
-                    </View>
+                    </Card>
                 ))}
             </View>
         </ScrollView>
@@ -157,27 +198,26 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: "row",
         alignItems: "center",
+        flexWrap: "wrap",
     },
-    card: {
-        backgroundColor: "#D3D3D3",
-        paddingVertical: 10,
-        paddingHorizontal: 12,
-        borderRadius: 10,
+    cardWrapper: {
         marginRight: 10,
-        width: 120,
-        height: 80,
-        justifyContent: "center",
-        alignItems: "center",
-        elevation: 3,
+    },
+    selectedCard: {
+        backgroundColor: "red",
     },
     firstLine: {
         color: "black",
         fontSize: 12,
+        textAlign: "center",
     },
     secondLine: {
         color: "black",
         fontSize: 12,
         textAlign: "center",
+    },
+    selectedText: {
+        color: "white",
     },
     nameItem: {
         marginHorizontal: 10,
@@ -204,13 +244,6 @@ const styles = StyleSheet.create({
         padding: 12,
         elevation: 3,
         marginTop: 20,
-    },
-    productCard: {
-        backgroundColor: "#f9f9f9",
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 20,
-        elevation: 4,
     },
     productTitle: {
         fontSize: 16,
@@ -249,33 +282,30 @@ const styles = StyleSheet.create({
         color: "#007ACC",
         fontWeight: "600",
     },
-    quantityContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10,
-        borderWidth: 1,
-        borderColor: "#007ACC",
-        paddingHorizontal: 16,
-        paddingVertical: 6,
-        borderRadius: 8,
-    },
-    quantityButton: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: "#007ACC",
-        paddingHorizontal: 8,
-    },
-    quantityText: {
-        fontSize: 16,
-        fontWeight: "600",
-        color: "#000",
-    },
     separator: {
         marginVertical: 15,
         borderBottomColor: 'black',
-        borderBottomWidth: StyleSheet.hairlineWidth,
-        width: '100%',
+        borderBottomWidth: 1,
         marginTop: -1,
         marginLeft: 10
     },
+    titleRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+
+    inStockBadge: {
+        backgroundColor: 'green',
+        borderRadius: 12,
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+    },
+
+    inStockText: {
+        color: 'white',
+        fontSize: 12,
+        fontWeight: '600',
+    },
+
 });

@@ -230,7 +230,7 @@ export function OrderSummary() {
   return (
     <FlatList
       style={styles.container}
-      data={[]} // data is rendered manually in ListHeader
+      data={[]} 
       keyExtractor={(item, index) => index.toString()}
       renderItem={null}
       ListHeaderComponent={ListHeader}

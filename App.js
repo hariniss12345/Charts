@@ -15,8 +15,8 @@ export default function App(){
       <DoughnutChart/> */}
       {/* <Goals/> */}
       {/* <Profile/> */}
-      {/* <Products/> */}
-      <OrderSummary/>
+      <Products/>
+      {/* <OrderSummary/>  */}
       </ScrollView>
     </View>
   )

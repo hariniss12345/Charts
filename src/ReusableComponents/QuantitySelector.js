@@ -8,7 +8,7 @@ const QuantitySelector = ({
     const [quantity, setQuantity] = useState(initialQuantity);
 
     useEffect(() => {
-        setQuantity(initialQuantity); // in case parent updates initial quantity
+        setQuantity(initialQuantity); 
     }, [initialQuantity]);
 
     const handleIncrement = () => {
