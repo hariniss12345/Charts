@@ -26,7 +26,7 @@ export default function App() {
 
       {/* <BarCharts /> */}
       {/* <DoughnutChart /> */}
-      {/* <Goals /> */}
+       {/* <Goals />  */}
       {/* <Products /> */}
       {/* <OrderSummary /> */}
       <Analytics/>
