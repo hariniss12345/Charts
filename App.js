@@ -30,7 +30,7 @@ export default function App() {
 
       {/* <BarCharts /> */}
       {/* <DoughnutChart /> */}
-       {/* <Goals />  */}
+       <Goals /> 
 
       {/* <OrderSummary /> */}
       <Analytics/>

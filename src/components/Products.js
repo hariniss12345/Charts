@@ -7,73 +7,71 @@ import {
     Image,
     TouchableOpacity,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import DataRow from "../ReusableComponents/DataRow";
 import QuantitySelector from "../ReusableComponents/QuantitySelector";
 import Card from "../ReusableComponents/Card";
-import { useNavigation } from "@react-navigation/native";
 
+const CATEGORY_TITLES = [
+    "All Products",
+    "Frequently Brought Products",
+    "Focus Products",
+    "New Products",
+    "Offers & Promotion",
+    "Free Products",
+];
+
+const PRODUCT_NAMES = ["Arrack", "Brandy", "Gin", "Whisky", "Rum"];
+
+const PRODUCTS = [
+    {
+        title: "Governor Choice",
+        subtitle: "Arrack",
+        description: "750ml (Pack of 6)",
+        dataSets: [
+            { label: "MRP", value: "\u20B94,000" },
+            { label: "PTR", value: "\u20B93,280" },
+            { label: "Margin", value: "13.78%" },
+            { label: "Stock", value: "113" },
+        ],
+    },
+    {
+        title: "Ceylon Arrack",
+        subtitle: "Arrack",
+        description: "750ml (Pack of 6)",
+        dataSets: [
+            { label: "MRP", value: "\u20B93,852" },
+            { label: "PTR", value: "\u20B93,200" },
+            { label: "Margin", value: "13.78%" },
+            { label: "Stock", value: "200" },
+        ],
+    },
+    {
+        title: "Double Distilled",
+        subtitle: "Arrack",
+        description: "750ml (Pack of 6)",
+        dataSets: [
+            { label: "MRP", value: "\u20B93,852" },
+            { label: "PTR", value: "\u20B93,200" },
+            { label: "Margin", value: "13.78%" },
+            { label: "Stock", value: "200" },
+        ],
+    },
+    {
+        title: "Navy Seal",
+        subtitle: "Arrack",
+        description: "750ml (Pack of 6)",
+        dataSets: [
+            { label: "MRP", value: "\u20B93,852" },
+            { label: "PTR", value: "\u20B93,200" },
+            { label: "Margin", value: "13.78%" },
+            { label: "Stock", value: "200" },
+        ],
+    },
+];
 
 export function Products() {
-    const navigation = useNavigation()
-    const data = {
-        title: [
-            "All Products",
-            "Frequently Brought Products",
-            "Focus Products",
-            "New Products",
-            "Offers & Promotion",
-            "Free Products",
-        ],
-        name: ["Arrack", "Brandy", "Gin", "Whisky", "Rum"],
-    };
-
-    const product = [
-        {
-            title: "Governor Choice",
-            subtitle: "Arrack",
-            description: "750ml (Pack of 6)",
-            dataSets: [
-                { label: "MRP", value: "\u20B94,000" },
-                { label: "PTR", value: "\u20B93,280" },
-                { label: "Margin", value: "13.78%" },
-                { label: "Stock", value: "113" },
-            ],
-        },
-        {
-            title: "Ceylon Arrack",
-            subtitle: "Arrack",
-            description: "750ml (Pack of 6)",
-            dataSets: [
-                { label: "MRP", value: "\u20B93,852" },
-                { label: "PTR", value: "\u20B93,200" },
-                { label: "Margin", value: "13.78%" },
-                { label: "Stock", value: "200" },
-            ],
-        },
-        {
-            title: "Double Distilled",
-            subtitle: "Arrack",
-            description: "750ml (Pack of 6)",
-            dataSets: [
-                { label: "MRP", value: "\u20B93,852" },
-                { label: "PTR", value: "\u20B93,200" },
-                { label: "Margin", value: "13.78%" },
-                { label: "Stock", value: "200" },
-            ],
-        },
-        {
-            title: "Navy Seal",
-            subtitle: "Arrack",
-            description: "750ml (Pack of 6)",
-            dataSets: [
-                { label: "MRP", value: "\u20B93,852" },
-                { label: "PTR", value: "\u20B93,200" },
-                { label: "Margin", value: "13.78%" },
-                { label: "Stock", value: "200" },
-            ],
-        },
-    ];
-
+    const navigation = useNavigation();
     const [quantity, setQuantity] = useState(0);
     const [isAdded, setIsAdded] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
@@ -84,36 +82,39 @@ export function Products() {
         setQuantity(1);
     };
 
+    const renderCategoryButton = (item, index) => {
+        const firstSpace = item.indexOf(" ");
+        const first = firstSpace !== -1 ? item.slice(0, firstSpace) : item;
+        const rest = firstSpace !== -1 ? item.slice(firstSpace + 1) : "";
+        const isSelected = selectedTitle === item;
+
+        return (
+            <Card
+                key={index}
+                style={[
+                    styles.cardWrapper,
+                    isSelected && styles.selectedCard
+                ]}
+            >
+                <TouchableOpacity onPress={() => setSelectedTitle(item)} style={styles.cardTouchable}>
+                    <Text style={[styles.cardText, isSelected && styles.selectedText]}>{first}</Text>
+                    <Text style={[styles.cardText, isSelected && styles.selectedText]}>{rest}</Text>
+                </TouchableOpacity>
+            </Card>
+        );
+    };
+
     return (
         <ScrollView style={styles.container}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={styles.row}>
-                    {data.title.map((item, index) => {
-                        const firstSpaceIndex = item.indexOf(" ");
-                        const firstWord = firstSpaceIndex !== -1 ? item.slice(0, firstSpaceIndex) : item;
-                        const rest = firstSpaceIndex !== -1 ? item.slice(firstSpaceIndex + 1) : "";
-                        const isSelected = selectedTitle === item;
-
-                        return (<Card key={index} style={{ backgroundColor: selectedTitle === item ? "red" : "#E0E0E0", marginRight: 10, borderWidth: 0 }}>
-                            <TouchableOpacity onPress={() => setSelectedTitle(item)} className="flex-col justify-center items-center px-3 py-2">
-                                <Text style={{ fontWeight: '600', fontSize: 16, color: selectedTitle === item ? 'white' : 'black' }}>
-                                    {firstWord}
-                                </Text>
-                                <Text style={{ fontWeight: '600', fontSize: 16, color: selectedTitle === item ? 'white' : 'black' }}>
-                                    {rest}
-                                </Text>
-
-                            </TouchableOpacity>
-                        </Card>
-
-                        );
-                    })}
+                    {CATEGORY_TITLES.map(renderCategoryButton)}
                 </View>
             </ScrollView>
 
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={[styles.row, { marginTop: 40 }]}>
-                    {data.name.map((item, index) => (
+                    {PRODUCT_NAMES.map((item, index) => (
                         <TouchableOpacity
                             key={index}
                             onPress={() => setSelectedItem(item)}
@@ -131,17 +132,17 @@ export function Products() {
             <View style={styles.separator} />
 
             <View style={styles.searchCard}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <View style={styles.searchRow}>
                     <Image
                         source={require("../assets/icons/Search.png")}
                         style={styles.icon}
                     />
-                    <Text style={{ marginLeft: 10, fontSize: 16, color: "#333" }}>Search</Text>
+                    <Text style={styles.searchText}>Search</Text>
                 </View>
             </View>
 
             <View style={{ marginTop: 30 }}>
-                {product.map((item, index) => (
+                {PRODUCTS.map((item, index) => (
                     <Card key={index} style={{ marginBottom: 15 }}>
                         <View style={styles.titleRow}>
                             <Text style={styles.productTitle}>{item.title}</Text>
@@ -154,31 +155,33 @@ export function Products() {
                         <DataRow data={item.dataSets} />
 
                         {isAdded && (
-                            <Text style={{ color: "#007ACC", marginTop: 10 }}>
+                            <Text style={styles.discountInfo}>
                                 Add 10 quantity to get a discount 10% on total item bill
                             </Text>
                         )}
 
                         {selectedTitle === "Free Products" && (
-                            <Card style={{marginTop:10,backgroundColor:'#007ACC'}}>
-                            <Text style={{ color: 'white' }}>
-                                Get 12 Bottles of Budweiser Magnum Cans free with every 6 packs.
-                            </Text>
+                            <Card style={styles.freeCard}>
+                                <Text style={styles.freeCardText}>
+                                    Get 12 Bottles of Budweiser Magnum Cans free with every 6 packs.
+                                </Text>
                             </Card>
                         )}
 
-
                         <View style={styles.buttonRow}>
-                            <TouchableOpacity style={styles.actionButton} onPress={()=>navigation.navigate('ViewDetails')}>
+                            <TouchableOpacity
+                                style={styles.actionButton}
+                                onPress={() => navigation.navigate("ViewDetails")}
+                            >
                                 <Text style={styles.buttonText}>View Details</Text>
                             </TouchableOpacity>
 
                             {!isAdded ? (
                                 <TouchableOpacity
-                                    style={[styles.actionButton, { backgroundColor: '#007ACC' }]}
+                                    style={[styles.actionButton, styles.addButton]}
                                     onPress={handleAddClick}
                                 >
-                                    <Text style={[styles.buttonText, { color: 'white' }]}>Add</Text>
+                                    <Text style={styles.addButtonText}>Add</Text>
                                 </TouchableOpacity>
                             ) : (
                                 <QuantitySelector
@@ -195,51 +198,40 @@ export function Products() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        margin: 20,
-    },
-    row: {
-        flexDirection: "row",
-        alignItems: "center",
-        flexWrap: "wrap",
-    },
+    container: { margin: 20 },
+    row: { flexDirection: "row", alignItems: "center", flexWrap: "wrap" },
     cardWrapper: {
         marginRight: 10,
+        backgroundColor: "#E0E0E0",
+        borderWidth: 0,
     },
-    selectedCard: {
-        backgroundColor: "red",
+    selectedCard: { backgroundColor: "red" },
+    cardTouchable: {
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 12,
+        paddingVertical: 8,
     },
-    firstLine: {
+    cardText: {
+        fontWeight: "600",
+        fontSize: 16,
         color: "black",
-        fontSize: 12,
-        textAlign: "center",
     },
-    secondLine: {
-        color: "black",
-        fontSize: 12,
-        textAlign: "center",
-    },
-    selectedText: {
-        color: "white",
-    },
+    selectedText: { color: "white" },
     nameItem: {
         marginHorizontal: 10,
         paddingBottom: 5,
         borderBottomWidth: 4,
-        borderBottomColor: 'transparent',
+        borderBottomColor: "transparent",
     },
     selectedNameItem: {
-        borderBottomColor: '#007ACC',
+        borderBottomColor: "#007ACC",
     },
     nameText: {
         fontSize: 16,
         color: "black",
         paddingHorizontal: 20,
-    },
-    icon: {
-        width: 30,
-        height: 30,
-        tintColor: "black",
     },
     searchCard: {
         backgroundColor: "#fff",
@@ -247,6 +239,20 @@ const styles = StyleSheet.create({
         padding: 12,
         elevation: 3,
         marginTop: 20,
+    },
+    searchRow: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    searchText: {
+        marginLeft: 10,
+        fontSize: 16,
+        color: "#333",
+    },
+    icon: {
+        width: 30,
+        height: 30,
+        tintColor: "black",
     },
     productTitle: {
         fontSize: 16,
@@ -263,6 +269,33 @@ const styles = StyleSheet.create({
         color: "#666",
         marginVertical: 6,
     },
+    discountInfo: {
+        color: "#007ACC",
+        marginTop: 10,
+    },
+    freeCard: {
+        marginTop: 10,
+        backgroundColor: "#007ACC",
+    },
+    freeCardText: {
+        color: "white",
+    },
+    titleRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    inStockBadge: {
+        backgroundColor: "green",
+        borderRadius: 12,
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+    },
+    inStockText: {
+        color: "white",
+        fontSize: 12,
+        fontWeight: "600",
+    },
     buttonRow: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -276,8 +309,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#007ACC",
         elevation: 2,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
         minWidth: 140,
     },
     buttonText: {
@@ -285,30 +318,19 @@ const styles = StyleSheet.create({
         color: "#007ACC",
         fontWeight: "600",
     },
+    addButton: {
+        backgroundColor: "#007ACC",
+    },
+    addButtonText: {
+        color: "white",
+        fontWeight: "600",
+        fontSize: 14,
+    },
     separator: {
         marginVertical: 15,
-        borderBottomColor: 'black',
+        borderBottomColor: "black",
         borderBottomWidth: 1,
         marginTop: -1,
-        marginLeft: 10
+        marginLeft: 10,
     },
-    titleRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-
-    inStockBadge: {
-        backgroundColor: 'green',
-        borderRadius: 12,
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-    },
-
-    inStockText: {
-        color: 'white',
-        fontSize: 12,
-        fontWeight: '600',
-    },
-
 });
