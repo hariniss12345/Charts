@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,11 +7,11 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import DataRow from "../ReusableComponents/DataRow";
 import QuantitySelector from "../ReusableComponents/QuantitySelector";
 import Card from "../ReusableComponents/Card";
-
 
 const CATEGORY_TITLES = [
   "All Products",
@@ -74,8 +74,40 @@ const PRODUCTS = [
 export function Products() {
   const navigation = useNavigation();
   const [selectedItem, setSelectedItem] = useState(null);
-  const [selectedTitle, setSelectedTitle] = useState(null);
+  const [selectedTitle, setSelectedTitle] = useState('All Products');
   const [quantities, setQuantities] = useState({});
+
+  const STORAGE_KEY = "persistedQuantities";
+
+  useEffect(() => {
+    loadQuantities();
+  }, []);
+
+  useEffect(() => {
+    saveQuantities();
+  }, [quantities]);
+
+  const loadQuantities = async () => {
+    try {
+      const stored = await AsyncStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        console.log("Loaded from AsyncStorage:", stored);
+        setQuantities(JSON.parse(stored));
+      }
+    } catch (error) {
+      console.error("Failed to load quantities from storage", error);
+    }
+  };
+
+  const saveQuantities = async () => {
+    try {
+      const jsonValue = JSON.stringify(quantities);
+      await AsyncStorage.setItem(STORAGE_KEY,jsonValue);
+      console.log("Saved to AsyncStorage:", jsonValue);
+    } catch (error) {
+      console.error("Failed to save quantities to storage", error);
+    }
+  };
 
   const handleAddClick = (index) => {
     setQuantities((prev) => ({ ...prev, [index]: 1 }));
@@ -105,14 +137,18 @@ export function Products() {
     return (
       <Card
         key={index}
-        style={[
-          styles.cardWrapper,
-          isSelected && styles.selectedCard
-        ]}
+        style={[styles.cardWrapper, isSelected && styles.selectedCard]}
       >
-        <TouchableOpacity onPress={() => setSelectedTitle(item)} style={styles.cardTouchable}>
-          <Text style={[styles.cardText, isSelected && styles.selectedText]}>{first}</Text>
-          <Text style={[styles.cardText, isSelected && styles.selectedText]}>{rest}</Text>
+        <TouchableOpacity
+          onPress={() => setSelectedTitle(item)}
+          style={styles.cardTouchable}
+        >
+          <Text style={[styles.cardText, isSelected && styles.selectedText]}>
+            {first}
+          </Text>
+          <Text style={[styles.cardText, isSelected && styles.selectedText]}>
+            {rest}
+          </Text>
         </TouchableOpacity>
       </Card>
     );
@@ -120,114 +156,117 @@ export function Products() {
 
   return (
     <View>
-    <ScrollView style={styles.container}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View style={styles.row}>
-          {CATEGORY_TITLES.map(renderCategoryButton)}
-        </View>
-      </ScrollView>
+      <ScrollView style={styles.container}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View style={styles.row}>
+            {CATEGORY_TITLES.map(renderCategoryButton)}
+          </View>
+        </ScrollView>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View style={[styles.row, { marginTop: 40 }]}>
-          {PRODUCT_NAMES.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => setSelectedItem(item)}
-              style={[
-                styles.nameItem,
-                selectedItem === item && styles.selectedNameItem,
-              ]}
-            >
-              <Text style={styles.nameText}>{item}</Text>
-            </TouchableOpacity>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View style={[styles.row, { marginTop: 40 }]}>
+            {PRODUCT_NAMES.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => setSelectedItem(item)}
+                style={[
+                  styles.nameItem,
+                  selectedItem === item && styles.selectedNameItem,
+                ]}
+              >
+                <Text style={styles.nameText}>{item}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+
+        <View style={styles.separator} />
+
+        <View style={styles.searchCard}>
+          <View style={styles.searchRow}>
+            <Image
+              source={require("../assets/icons/Search.png")}
+              style={styles.icon}
+            />
+            <Text style={styles.searchText}>Search</Text>
+          </View>
+        </View>
+
+        <View style={{ marginTop: 30 }}>
+          {PRODUCTS.map((item, index) => (
+            <Card key={index} style={{ marginBottom: 15 }}>
+              <View style={styles.titleRow}>
+                <Text style={styles.productTitle}>{item.title}</Text>
+                <View style={styles.inStockBadge}>
+                  <Text style={styles.inStockText}>In Stock</Text>
+                </View>
+              </View>
+              <Text style={styles.productSubtitle}>{item.subtitle}</Text>
+              <Text style={styles.productDesc}>{item.description}</Text>
+              <DataRow data={item.dataSets} />
+
+              {quantities[index] > 0 && (
+                <Text style={styles.discountInfo}>
+                  Add 10 quantity to get a discount 10% on total item bill
+                </Text>
+              )}
+
+              {selectedTitle === "Free Products" && (
+                <Card style={styles.freeCard}>
+                  <Text style={styles.freeCardText}>
+                    Get 12 Bottles of Budweiser Magnum Cans free with every 6
+                    packs.
+                  </Text>
+                </Card>
+              )}
+
+              <View style={styles.buttonRow}>
+                <TouchableOpacity
+                  style={styles.actionButton}
+                  onPress={() => navigation.navigate("ViewDetails")}
+                >
+                  <Text style={[styles.buttonText, { paddingHorizontal: 15 }]}>View Details</Text>
+                </TouchableOpacity>
+
+                {quantities[index] ? (
+                  <QuantitySelector
+                    initialQuantity={quantities[index]}
+                    onChange={(newQty) => handleQuantityChange(index, newQty)}
+                  />
+                ) : (
+                  <TouchableOpacity
+                    style={[styles.actionButton, styles.addButton]}
+                    onPress={() => handleAddClick(index)}
+                  >
+                    <Text style={[styles.addButtonText, { paddingHorizontal: 45 }]}>Add</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </Card>
           ))}
         </View>
       </ScrollView>
 
-      <View style={styles.separator} />
-
-      <View style={styles.searchCard}>
-        <View style={styles.searchRow}>
-          <Image
-            source={require("../assets/icons/Search.png")}
-            style={styles.icon}
-          />
-          <Text style={styles.searchText}>Search</Text>
+      {Object.values(quantities).some((qty) => qty >= 1) && (
+        <View style={styles.footer}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.footerAmount}>₹{calculateTotalAmount()}</Text>
+            <Text style={styles.inclTaxText}>Incl. of taxes</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.proceedButton}
+            onPress={() => navigation.navigate("OrderSummary")}
+          >
+            <Text style={styles.proceedButtonText}>Proceed</Text>
+          </TouchableOpacity>
         </View>
-      </View>
-
-      <View style={{ marginTop: 30 }}>
-        {PRODUCTS.map((item, index) => (
-          <Card key={index} style={{ marginBottom: 15 }}>
-            <View style={styles.titleRow}>
-              <Text style={styles.productTitle}>{item.title}</Text>
-              <View style={styles.inStockBadge}>
-                <Text style={styles.inStockText}>In Stock</Text>
-              </View>
-            </View>
-            <Text style={styles.productSubtitle}>{item.subtitle}</Text>
-            <Text style={styles.productDesc}>{item.description}</Text>
-            <DataRow data={item.dataSets} />
-
-            {quantities[index] >= 10 && (
-              <Text style={styles.discountInfo}>
-                Add 10 quantity to get a discount 10% on total item bill
-              </Text>
-            )}
-
-            {selectedTitle === "Free Products" && (
-              <Card style={styles.freeCard}>
-                <Text style={styles.freeCardText}>
-                  Get 12 Bottles of Budweiser Magnum Cans free with every 6 packs.
-                </Text>
-              </Card>
-            )}
-
-            <View style={styles.buttonRow}>
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={() => navigation.navigate("ViewDetails")}
-              >
-                <Text style={styles.buttonText}>View Details</Text>
-              </TouchableOpacity>
-
-              {quantities[index] ? (
-                <QuantitySelector
-                  initialQuantity={1}
-                  onChange={(newQty) => handleQuantityChange(index, newQty)}
-                />
-              ) : (
-                <TouchableOpacity
-                  style={[styles.actionButton, styles.addButton]}
-                  onPress={() => handleAddClick(index)}
-                >
-                  <Text style={styles.addButtonText}>Add</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </Card>
-        ))}
-      </View>
-    </ScrollView>
- {Object.values(quantities).some(qty => qty >= 1) && (
-  <View style={styles.footer}>
-    <View style={{ flex: 1 }}>
-      <Text style={styles.footerAmount}>₹{calculateTotalAmount()}</Text>
-      <Text style={styles.inclTaxText}>Incl. of taxes</Text>
-    </View>
-    <TouchableOpacity style={styles.proceedButton} onPress={()=>navigation.navigate('OrderSummary')} >
-      <Text style={styles.proceedButtonText}>Proceed</Text>
-    </TouchableOpacity>
-  </View>
-)}
-
-
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { margin: 20,marginBottom:70},
+  container: { margin: 20, marginBottom: 70 },
   row: { flexDirection: "row", alignItems: "center", flexWrap: "wrap" },
   cardWrapper: {
     marginRight: 10,
@@ -331,87 +370,53 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   actionButton: {
-    backgroundColor: "#fff",
-    paddingVertical: 10,
-    paddingHorizontal: 24,
-    borderRadius: 10,
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#007ACC",
-    elevation: 2,
-    alignItems: "center",
-    justifyContent: "center",
-    minWidth: 140,
+    borderColor: '#007ACC',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   buttonText: {
-    fontSize: 14,
     color: "#007ACC",
-    fontWeight: "600",
   },
   addButton: {
     backgroundColor: "#007ACC",
+
   },
   addButtonText: {
-    color: "white",
-    fontWeight: "600",
-    fontSize: 14,
+    color: "#fff",
+    fontWeight: "bold",
   },
-  separator: {
-    marginVertical: 15,
-    borderBottomColor: "black",
-    borderBottomWidth: 1,
-    marginTop: -1,
-    marginLeft: 10,
+  footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#fff",
+    padding: 16,
+    borderTopWidth: 1,
+    borderColor: "#ccc",
+    flexDirection: "row",
+    alignItems: "center",
   },
-  totalAmountContainer: {
-    marginTop: 30,
-    marginBottom: 50,
-    padding: 20,
-    backgroundColor: "#F1F1F1",
-    borderRadius: 10,
-  },
-  totalAmountText: {
+  footerAmount: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#007ACC",
-    textAlign: "center",
   },
- footer: {
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center",
-  padding: 15,
-  backgroundColor: "#fff",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  right: 0,
-  borderTopWidth: 1,
-  borderColor: "#ccc",
-},
-
-footerAmount: {
-  fontSize: 18,
-  fontWeight: "bold",
-  color: "#000",
-},
-
-inclTaxText: {
-  fontSize: 12,
-  color: "#555",
-  marginTop: 4,
-},
-
-proceedButton: {
-  backgroundColor: "#007ACC",
-  paddingVertical: 10,
-  paddingHorizontal: 40,
-  borderRadius: 12,
-},
-
-proceedButtonText: {
-  color: "#fff",
-  fontWeight: "bold",
-  fontSize: 16,
-},
-
+  inclTaxText: {
+    fontSize: 12,
+    color: "#555",
+  },
+  proceedButton: {
+    backgroundColor: "#007ACC",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  proceedButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
 });
