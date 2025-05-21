@@ -20,10 +20,11 @@ export default function App() {
     <View style={{ flex: 1 }}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-         {/* <Stack.Screen name="Profile" component={Profile} />
+          {/* <Stack.Screen name="Profile" component={Profile} />
           <Stack.Screen name="EditProfile" component={EditProfile} />  */}
           <Stack.Screen name="Products" component={Products}/>
           <Stack.Screen name="ViewDetails" component={ViewDetails}/> 
+          <Stack.Screen name="OrderSummary" component={OrderSummary}/>
           
         </Stack.Navigator>
       </NavigationContainer>

@@ -28,10 +28,23 @@ export function Analytics() {
     },
   };
 
-  const { time, label, description } = dataByType[selectedType];
+  const chartData = {
+    Daily: {
+      data: [17, 20, 13, 25, 22, 10],
+      labels: ["27 Jun", "28 Jun", "29 Jun", "30 Jun", "1 Jul", "Today"],
+    },
+    Monthly: {
+      data: [120, 140, 100, 160],
+      labels: ["Feb", "Mar", "Apr", "May"],
+    },
+    Quarterly: {
+      data: [300, 450, 400],
+      labels: ["Q1", "Q2", "Q3"],
+    },
+  };
 
-  const data = [17, 20, 13, 25, 22, 10];
-  const labels = ["27 Jun", "28 Jun", "29 Jun", "30 Jun", "1 Jul", "Today"];
+  const { data, labels } = chartData[selectedType];
+  const { time, label, description } = dataByType[selectedType];
 
   const RoundedBars = ({ x, y, bandwidth, data }) =>
     data.map((value, index) => (
