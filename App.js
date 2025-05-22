@@ -12,6 +12,7 @@ import { Products } from "./src/components/Products";
 import { OrderSummary } from "./src/components/OrderSummary";
 import { Analytics } from "./src/components/Analytics";
 import { ViewDetails } from "./src/components/ViewDetails";
+import { MyRetailers } from "./src/components/MyRetailers";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,9 +23,10 @@ export default function App() {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {/* <Stack.Screen name="Profile" component={Profile} />
           <Stack.Screen name="EditProfile" component={EditProfile} />  */}
-          <Stack.Screen name="Products" component={Products}/>
+          {/* <Stack.Screen name="Products" component={Products}/>
           <Stack.Screen name="ViewDetails" component={ViewDetails}/> 
-          <Stack.Screen name="OrderSummary" component={OrderSummary}/>
+          <Stack.Screen name="OrderSummary" component={OrderSummary}/> */}
+          <Stack.Screen name="MyRetailers" component={MyRetailers}/>
           
         </Stack.Navigator>
       </NavigationContainer>

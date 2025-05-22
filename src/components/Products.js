@@ -73,11 +73,13 @@ const PRODUCTS = [
 
 export function Products() {
   const navigation = useNavigation();
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [selectedTitle, setSelectedTitle] = useState('All Products');
+  const [selectedItem, setSelectedItem] = useState('Arrack');
+  const [selectedTitle, setSelectedTitle] = useState("All Products");
   const [quantities, setQuantities] = useState({});
+  const [productDetails, setProductDetails] = useState({})
 
   const STORAGE_KEY = "persistedQuantities";
+  const PRODUCT_DETAILS_KEY = "persistedProductDetails";
 
   useEffect(() => {
     loadQuantities();
@@ -85,36 +87,67 @@ export function Products() {
 
   useEffect(() => {
     saveQuantities();
+    saveProductDetails();
   }, [quantities]);
 
   const loadQuantities = async () => {
     try {
       const stored = await AsyncStorage.getItem(STORAGE_KEY);
       if (stored) {
-        console.log("Loaded from AsyncStorage:", stored);
         setQuantities(JSON.parse(stored));
       }
+      const storedDetails = await AsyncStorage.getItem(PRODUCT_DETAILS_KEY);
+      if (storedDetails) {
+        setProductDetails(JSON.parse(storedDetails));
+      }
     } catch (error) {
-      console.error("Failed to load quantities from storage", error);
+      console.error("Failed to load from storage", error);
     }
   };
 
   const saveQuantities = async () => {
     try {
-      const jsonValue = JSON.stringify(quantities);
-      await AsyncStorage.setItem(STORAGE_KEY,jsonValue);
-      console.log("Saved to AsyncStorage:", jsonValue);
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(quantities));
     } catch (error) {
-      console.error("Failed to save quantities to storage", error);
+      console.error("Failed to save quantities", error);
+    }
+  };
+
+  const saveProductDetails = async () => {
+    try {
+      await AsyncStorage.setItem(PRODUCT_DETAILS_KEY, JSON.stringify(Object.values(productDetails)));
+    } catch (error) {
+      console.error("Failed to save product details", error);
     }
   };
 
   const handleAddClick = (index) => {
-    setQuantities((prev) => ({ ...prev, [index]: 1 }));
+    const product = PRODUCTS[index];
+    const newQty = 1;
+    setQuantities((prev) => ({ ...prev, [index]: newQty }));
+    setProductDetails((prev) => ({
+      ...prev,
+      [index]: {
+        title: product.title,
+        subtitle: product.subtitle,
+        description: product.description,
+        quantity: newQty,
+      },
+    }));
   };
 
   const handleQuantityChange = (index, newQty) => {
+    const product = PRODUCTS[index];
     setQuantities((prev) => ({ ...prev, [index]: newQty }));
+    setProductDetails((prev) => ({
+      ...prev,
+      [index]: {
+        title: product.title,
+        subtitle: product.subtitle,
+        description: product.description,
+        quantity: newQty,
+      },
+    }));
   };
 
   const calculateTotalAmount = () => {
@@ -135,20 +168,10 @@ export function Products() {
     const isSelected = selectedTitle === item;
 
     return (
-      <Card
-        key={index}
-        style={[styles.cardWrapper, isSelected && styles.selectedCard]}
-      >
-        <TouchableOpacity
-          onPress={() => setSelectedTitle(item)}
-          style={styles.cardTouchable}
-        >
-          <Text style={[styles.cardText, isSelected && styles.selectedText]}>
-            {first}
-          </Text>
-          <Text style={[styles.cardText, isSelected && styles.selectedText]}>
-            {rest}
-          </Text>
+      <Card key={index} style={[styles.cardWrapper, isSelected && styles.selectedCard]}>
+        <TouchableOpacity onPress={() => setSelectedTitle(item)} style={styles.cardTouchable}>
+          <Text style={[styles.cardText, isSelected && styles.selectedText]}>{first}</Text>
+          <Text style={[styles.cardText, isSelected && styles.selectedText]}>{rest}</Text>
         </TouchableOpacity>
       </Card>
     );
@@ -158,9 +181,7 @@ export function Products() {
     <View>
       <ScrollView style={styles.container}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.row}>
-            {CATEGORY_TITLES.map(renderCategoryButton)}
-          </View>
+          <View style={styles.row}>{CATEGORY_TITLES.map(renderCategoryButton)}</View>
         </ScrollView>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -184,10 +205,7 @@ export function Products() {
 
         <View style={styles.searchCard}>
           <View style={styles.searchRow}>
-            <Image
-              source={require("../assets/icons/Search.png")}
-              style={styles.icon}
-            />
+            <Image source={require("../assets/icons/Search.png")} style={styles.icon} />
             <Text style={styles.searchText}>Search</Text>
           </View>
         </View>
@@ -214,8 +232,7 @@ export function Products() {
               {selectedTitle === "Free Products" && (
                 <Card style={styles.freeCard}>
                   <Text style={styles.freeCardText}>
-                    Get 12 Bottles of Budweiser Magnum Cans free with every 6
-                    packs.
+                    Get 12 Bottles of Budweiser Magnum Cans free with every 6 packs.
                   </Text>
                 </Card>
               )}
@@ -225,7 +242,9 @@ export function Products() {
                   style={styles.actionButton}
                   onPress={() => navigation.navigate("ViewDetails")}
                 >
-                  <Text style={[styles.buttonText, { paddingHorizontal: 15 }]}>View Details</Text>
+                  <Text style={[styles.buttonText, { paddingHorizontal: 15 }]}>
+                    View Details
+                  </Text>
                 </TouchableOpacity>
 
                 {quantities[index] ? (
@@ -238,7 +257,9 @@ export function Products() {
                     style={[styles.actionButton, styles.addButton]}
                     onPress={() => handleAddClick(index)}
                   >
-                    <Text style={[styles.addButtonText, { paddingHorizontal: 45 }]}>Add</Text>
+                    <Text style={[styles.addButtonText, { paddingHorizontal: 45 }]}>
+                      Add
+                    </Text>
                   </TouchableOpacity>
                 )}
               </View>
@@ -255,7 +276,13 @@ export function Products() {
           </View>
           <TouchableOpacity
             style={styles.proceedButton}
-            onPress={() => navigation.navigate("OrderSummary")}
+            onPress={() => {
+              navigation.navigate("OrderSummary", {
+                Quantities: quantities,
+                totalAmount: calculateTotalAmount(),
+                ProductDetails: Object.values(productDetails),
+              });
+            }}
           >
             <Text style={styles.proceedButtonText}>Proceed</Text>
           </TouchableOpacity>
@@ -264,6 +291,7 @@ export function Products() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: { margin: 20, marginBottom: 70 },
@@ -278,8 +306,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
   },
   cardText: {
     fontWeight: "600",
@@ -303,8 +331,8 @@ const styles = StyleSheet.create({
   },
   searchCard: {
     backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 12,
+    borderRadius: 8,
+    padding: 10,
     elevation: 3,
     marginTop: 20,
   },

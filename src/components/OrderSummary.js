@@ -12,10 +12,13 @@ import {
 import QuantitySelector from "../ReusableComponents/QuantitySelector";
 import Card from "../ReusableComponents/Card";
 
-export function OrderSummary() {
+export function OrderSummary({route}) {
+
+  const {Quantities,totalAmount,ProductsDetails} = route.params
+
   const data = [
     { title: "Governor Choice", subtitle: "Arrack", description: "750ml (Pack of 6)" },
-    { title: "Navy Seal", subtitle: "Arrack", description: "750ml (Pack of 6)" },
+    { title: "Ceylon Arrack", subtitle: "Arrack", description: "750ml (Pack of 6)" },
   ];
 
   const bill = [
@@ -98,7 +101,7 @@ export function OrderSummary() {
             <Text style={styles.description}>{item.description}</Text>
           </View>
           <QuantitySelector
-            initialQuantity={quantities[index] || 0}
+            initialQuantity={Quantities[index]}
             onChange={(qty) => handleQuantityChange(index, qty)}
           />
         </View>
@@ -227,7 +230,8 @@ export function OrderSummary() {
     </>
   );
 
-  return (
+return (
+  <>
     <FlatList
       style={styles.container}
       data={[]} 
@@ -236,8 +240,23 @@ export function OrderSummary() {
       ListHeaderComponent={ListHeader}
       ListFooterComponent={ListFooter}
       keyboardShouldPersistTaps="handled"
+      contentContainerStyle={{ paddingBottom: 100 }} 
     />
-  );
+
+    
+    <View style={styles.footerContainer}>
+      <View style={styles.footerLeft}>
+        <Text style={styles.totalAmount}>₹{totalAmount}</Text>
+        <Text style={styles.inclTaxesText}>Incl. of taxes</Text>
+      </View>
+
+      <TouchableOpacity style={styles.paymentButton}>
+        <Text style={styles.paymentButtonText}>Go to Payment</Text>
+      </TouchableOpacity>
+    </View>
+  </>
+);
+
 }
 
 const styles = StyleSheet.create({
@@ -327,4 +346,41 @@ const styles = StyleSheet.create({
     height: 20,
     resizeMode: "contain",
   },
-});
+  footerContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 80,
+    backgroundColor: "#fff",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    borderTopWidth: 1,
+    borderTopColor: "#ddd",
+  },
+  footerLeft: {
+    flexDirection: "column",
+  },
+  totalAmount: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  inclTaxesText: {
+    fontSize: 12,
+    color: "#555",
+  },
+  paymentButton: {
+    backgroundColor: "#007ACC",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  paymentButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+})
