@@ -13,6 +13,8 @@ import { OrderSummary } from "./src/components/OrderSummary";
 import { Analytics } from "./src/components/Analytics";
 import { ViewDetails } from "./src/components/ViewDetails";
 import { MyRetailers } from "./src/components/MyRetailers";
+import { AllOrders } from "./src/components/AllOrders";
+import { OrderDetails} from "./src/components/OrderDetails";
 
 const Stack = createNativeStackNavigator();
 
@@ -26,7 +28,9 @@ export default function App() {
           {/* <Stack.Screen name="Products" component={Products}/>
           <Stack.Screen name="ViewDetails" component={ViewDetails}/> 
           <Stack.Screen name="OrderSummary" component={OrderSummary}/> */}
-          <Stack.Screen name="MyRetailers" component={MyRetailers}/>
+          {/* <Stack.Screen name="MyRetailers" component={MyRetailers}/> */}
+          <Stack.Screen name="AllOrders" component={AllOrders}/>
+          <Stack.Screen name="OrderDetails" component={OrderDetails}/>
           
         </Stack.Navigator>
       </NavigationContainer>
