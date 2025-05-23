@@ -48,7 +48,7 @@ const orderStatus = [
     id: 2,
     title: 'Order Dispatched',
     expected: 'Sat, 24 Jun 2024',
-    active: false,
+    active: true,
   },
   {
     id: 3,
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   greenLine: {
-    backgroundColor: 'green',
+    backgroundColor: '#7bcd12',
   },
   greyLine: {
     backgroundColor: '#ccc',
