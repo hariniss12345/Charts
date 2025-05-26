@@ -18,9 +18,9 @@ export default function Dropdown({ options, selected, onSelect, style, textStyle
                     source={
                         visible
                             ? require("../assets/icons/ChevronDown.png")
-                            : require("../assets/icons/Shape.png")
+                            : require("../assets/icons/down_arrow.png")
                     }
-                    style={[styles.icon, { tintColor: textStyle?.color || 'white' }]}
+                    style={[styles.icon, { tintColor: 'black' || 'white' }]}
                 />
             </TouchableOpacity>
 

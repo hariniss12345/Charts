@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 export function ViewDetails() {
   const data = [
     {
-      image: require('../assets/images/img.png'),
+      image: require('../assets/images/img.jpg'),
       title: 'Governors Choice',
       subtitle: 'Arrack',
       price: {

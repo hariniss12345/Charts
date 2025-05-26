@@ -11,9 +11,10 @@ import {
 } from "react-native";
 import QuantitySelector from "../ReusableComponents/QuantitySelector";
 import Card from "../ReusableComponents/Card";
+import { useNavigation } from "@react-navigation/native";
 
 export function OrderSummary({route}) {
-
+  const navigation = useNavigation();
   const {Quantities,totalAmount,ProductsDetails} = route.params
 
   const data = [
@@ -250,7 +251,9 @@ return (
         <Text style={styles.inclTaxesText}>Incl. of taxes</Text>
       </View>
 
-      <TouchableOpacity style={styles.paymentButton}>
+      <TouchableOpacity style={styles.paymentButton} onPress={()=>navigation.navigate("OrderSummary1",
+        totalAmount
+      )}>
         <Text style={styles.paymentButtonText}>Go to Payment</Text>
       </TouchableOpacity>
     </View>
